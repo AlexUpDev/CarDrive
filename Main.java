@@ -326,7 +326,7 @@ public class Main extends JFrame{
                     transmission.Mode = "R";
                     infoDisplay.setText(" ");
                 }
-                if ((NewMode == "R") && (engine.State == "Off")) { 
+                if ((NewMode == "R") && (engine.State == "Off")) {
                     infoDisplay.setText(" Start engine first!");
                 }
                 if (NewMode == "N") {
@@ -401,6 +401,21 @@ public class Main extends JFrame{
             if(Speed > 180) {
                 car.Resist = 0.9;
             }
+        }
+        public void calculateSpeed(Double Speed) {
+            if  (Speed >= 0 &&
+                Speed <= 200 &&
+                transmission.Mode == "D") {
+                car.Speed += 0.12 * engine.Power/5;
+            }
+            if (Speed > 0 && transmission.Mode != "R") {
+                car.Speed -= 0.15 * brakes.Power/5;
+                car.Speed-=car.Resist;
+            } else {
+                car.Speed = 0.0;
+            }
+
+
         }
     }
 
