@@ -81,8 +81,6 @@ public class Main extends JFrame{
 
         setVisible(true);
 
-        Double carSpeed = 0.0;
-        Integer brakesPower = 0;
 
         engine.State = "Off";
         engine.Power = 0;
@@ -123,7 +121,7 @@ public class Main extends JFrame{
         enginePowerDisplay.setEditable(false);
         transmissionDisplay.setText(" Mode: " + transmission.Mode);
         transmissionDisplay.setEditable(false);
-        brakesDisplay.append(" Brakes: " + brakesPower +"%");
+        brakesDisplay.append(" Brakes: " + brakes.Power +"%");
         brakesDisplay.setEditable(false);
         infoDisplay.append(" Useful info will appear here");
         infoDisplay.setEditable(false);
@@ -141,18 +139,19 @@ public class Main extends JFrame{
             if(     car.Speed<=200.0 &&
                     car.Speed >= 0.0 &&
                     transmission.Mode == "D") {
-                car.Speed += 0.12 * engine.Power/5 - car.Resist;
-
-                if (car.Speed > 0) {
-                    car.Speed -= 0.15 * brakes.Power/5;
-                }
-                if (car.Speed < 0) {
-                    car.Speed = 0.0;
-                }
-                if (car.Speed > 200) {
-                    car.Speed = 200.0;
-                }
+                car.Speed += 0.12 * engine.Power/5;
             }
+            if (car.Speed > 0) {
+                car.Speed -= 0.15 * brakes.Power/5;
+                car.Speed-=car.Resist;
+            }
+            if (car.Speed < 0) {
+                car.Speed = 0.0;
+            }
+            if (car.Speed > 200) {
+                car.Speed = 200.0;
+            }
+
             speedDisplay.setText(" Speed: " + Math.round(car.Speed) + "km/h");
         }
     }
@@ -194,51 +193,35 @@ public class Main extends JFrame{
         }
     }
     class transmissionSetModeR implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            transmission.setMode("R");
+        public void actionPerformed(ActionEvent e) { transmission.setMode("R");
         }
     }
     class transmissionSetModeN implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            transmission.setMode("N");
+        public void actionPerformed(ActionEvent e) { transmission.setMode("N");
         }
     }
     class transmissionSetModeD implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            transmission.setMode("D");
+        public void actionPerformed(ActionEvent e) { transmission.setMode("D");
         }
     }
     class brakesSet0 implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            brakes.setBrakesPower(0);
+        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(0);
         }
     }
     class brakesSet25 implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            brakes.setBrakesPower(25);
+        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(25);
         }
     }
     class brakesSet50 implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            brakes.setBrakesPower(50);
+        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(50);
         }
     }
     class brakesSet75 implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            brakes.setBrakesPower(75);
+        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(75);
         }
     }
     class brakesSet100 implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-
-            brakes.setBrakesPower(100);
+        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(100);
         }
     }
 
@@ -257,21 +240,20 @@ public class Main extends JFrame{
             if(engine.State == "On") {
                 engine.State = "Off";
                 engine.Power = 0;
-                if(transmission.Mode != "P") {
+                if (transmission.Mode != "P") {
                     transmission.Mode = "N";
                 }
                 infoDisplay.setText(" Engine Stopped");
-                enginePowerDisplay.setText(" Power: " + engine.Power +"%");
+                enginePowerDisplay.setText(" Power: " + engine.Power + "%");
                 transmissionDisplay.setText(" Mode: " + transmission.Mode);
             }
-            if(engine.State == "Off") {
-                if(transmission.Mode != "P") {
-                    infoDisplay.setText(" Select P mode on transmission");
-                } else {
-                    engine.State = "On";
-                    infoDisplay.setText(" Engine Started");
-                }
+            else if(engine.State == "Off" && transmission.Mode == "P") {
+                engine.State = "On";
+                infoDisplay.setText(" Engine Started");
+            } else {
+                infoDisplay.setText(" Select P mode on transmission");
             }
+
             engineIODisplay.setText(" Engine: " + engine.State);
         }
 
@@ -319,20 +301,24 @@ public class Main extends JFrame{
                 }
                 if (NewMode == "P" && car.Speed == 0) {
                     transmission.Mode = "P";
+                    infoDisplay.setText(" ");
                 }
                 if (    NewMode == "R" &&
                         engine.State == "On" &&
                         car.Speed == 0){
                     transmission.Mode = "R";
+                    infoDisplay.setText(" ");
                 }
                 if ((NewMode == "R") && (engine.State == "Off")) {
                     infoDisplay.setText(" Start engine first!");
                 }
                 if (NewMode == "N") {
                     transmission.Mode = "N";
+                    infoDisplay.setText(" ");
                 }
                 if ((NewMode == "D") && (engine.State == "On")) {
                     transmission.Mode = "D";
+                    infoDisplay.setText(" ");
                 }
                 if ((NewMode == "D") && (engine.State == "Off")) {
                     infoDisplay.setText(" Start engine first!");
