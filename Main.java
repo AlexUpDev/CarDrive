@@ -136,7 +136,7 @@ public class Main extends JFrame{
     class SpeedDisplay extends TimerTask {
         public void run() {
             car.setResist(car.Speed);
-            if(     car.Speed<=200.0 &&
+            if (    car.Speed<=200.0 &&
                     car.Speed >= 0.0 &&
                     transmission.Mode == "D") {
                 car.Speed += 0.12 * engine.Power/5;
@@ -145,12 +145,29 @@ public class Main extends JFrame{
                 car.Speed -= 0.15 * brakes.Power/5;
                 car.Speed-=car.Resist;
             }
-            if (car.Speed < 0) {
+            if (car.Speed < 0 && transmission.Mode != "R") {
                 car.Speed = 0.0;
+            }
+            if (    car.Speed <= 0 &&
+                    transmission.Mode == "R" &&
+                    car.Speed>=-30) {
+                car.Speed -= 0.12 * engine.Power / 5;
+            }
+            if (car.Speed < 0) {
+                car.Speed+= 0.15 * brakes.Power/5;
+                car.Speed+= car.Resist;
+            }
+            if (car.Speed > 0 && transmission.Mode == "R") {
+                car.Speed = 0.0;
+            }
+            //Setting limits of possible speed
+            if (car.Speed < -30) {
+                car.Speed = -30.0;
             }
             if (car.Speed > 200) {
                 car.Speed = 200.0;
             }
+
 
             speedDisplay.setText(" Speed: " + Math.round(car.Speed) + "km/h");
         }
@@ -309,7 +326,7 @@ public class Main extends JFrame{
                     transmission.Mode = "R";
                     infoDisplay.setText(" ");
                 }
-                if ((NewMode == "R") && (engine.State == "Off")) {
+                if ((NewMode == "R") && (engine.State == "Off")) { 
                     infoDisplay.setText(" Start engine first!");
                 }
                 if (NewMode == "N") {
@@ -322,6 +339,11 @@ public class Main extends JFrame{
                 }
                 if ((NewMode == "D") && (engine.State == "Off")) {
                     infoDisplay.setText(" Start engine first!");
+                }
+                if (NewMode == "P" ||
+                    NewMode == "D" &&
+                    car.Speed < 0) {
+                    infoDisplay.setText(" Stop first!");
                 }
                 transmissionDisplay.setText(" Mode: " + transmission.Mode);
             }
