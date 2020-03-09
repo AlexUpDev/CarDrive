@@ -91,6 +91,7 @@ public class Main extends JFrame{
 
         brakes.Power = 0;
         car.Speed = 0.0;
+        car.Resist = 0.0;
 
 
         engineStartStop.addActionListener(new engineStartPressed());
@@ -136,30 +137,11 @@ public class Main extends JFrame{
 
     class SpeedDisplay extends TimerTask {
         public void run() {
-            Double resist = 0.2;
-
-            if(car.Speed > 60) {
-                resist = 0.3;
-            }
-            if(car.Speed > 90) {
-                resist = 0.35;
-            }
-            if(car.Speed > 110) {
-                resist = 0.4;
-            }
-            if(car.Speed > 130) {
-                resist = 0.45;
-            }
-            if(car.Speed > 150) {
-                resist = 0.5;
-            }
-            if(car.Speed > 170) {
-                resist = 0.55;
-            }
+            car.setResist(car.Speed);
             if(     car.Speed<=200.0 &&
                     car.Speed >= 0.0 &&
                     transmission.Mode == "D") {
-                car.Speed += 0.12 * engine.Power/5 - resist;
+                car.Speed += 0.12 * engine.Power/5 - car.Resist;
 
                 if (car.Speed > 0) {
                     car.Speed -= 0.15 * brakes.Power/5;
@@ -387,6 +369,31 @@ public class Main extends JFrame{
 
     public class Car {
         Double Speed;
+        Double Resist;
+        public void setResist(Double Speed) {
+            car.Resist = 0.2;
+            if(Speed > 60) {
+                car.Resist = 0.3;
+            }
+            if(Speed > 80) {
+                car.Resist = 0.4;
+            }
+            if(Speed > 100) {
+                car.Resist = 0.5;
+            }
+            if(Speed > 120) {
+                car.Resist = 0.6;
+            }
+            if(Speed > 140) {
+                car.Resist = 0.7;
+            }
+            if(Speed > 160) {
+                car.Resist = 0.8;
+            }
+            if(Speed > 180) {
+                car.Resist = 0.9;
+            }
+        }
     }
 
 }
