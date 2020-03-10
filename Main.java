@@ -136,39 +136,7 @@ public class Main extends JFrame{
     class SpeedDisplay extends TimerTask {
         public void run() {
             car.setResist(car.Speed);
-            if (    car.Speed<=200.0 &&
-                    car.Speed >= 0.0 &&
-                    transmission.Mode == "D") {
-                car.Speed += 0.12 * engine.Power/5;
-            }
-            if (car.Speed > 0) {
-                car.Speed -= 0.15 * brakes.Power/5;
-                car.Speed-=car.Resist;
-            }
-            if (car.Speed < 0 && transmission.Mode != "R") {
-                car.Speed = 0.0;
-            }
-            if (    car.Speed <= 0 &&
-                    transmission.Mode == "R" &&
-                    car.Speed>=-30) {
-                car.Speed -= 0.12 * engine.Power / 5;
-            }
-            if (car.Speed < 0) {
-                car.Speed+= 0.15 * brakes.Power/5;
-                car.Speed+= car.Resist;
-            }
-            if (car.Speed > 0 && transmission.Mode == "R") {
-                car.Speed = 0.0;
-            }
-            //Setting limits of possible speed
-            if (car.Speed < -30) {
-                car.Speed = -30.0;
-            }
-            if (car.Speed > 200) {
-                car.Speed = 200.0;
-            }
-
-
+            car.calculateSpeed(car.Speed);
             speedDisplay.setText(" Speed: " + Math.round(car.Speed) + "km/h");
         }
     }
@@ -403,19 +371,38 @@ public class Main extends JFrame{
             }
         }
         public void calculateSpeed(Double Speed) {
-            if  (Speed >= 0 &&
-                Speed <= 200 &&
-                transmission.Mode == "D") {
-                car.Speed += 0.12 * engine.Power/5;
+            //Calculating Engine influence on speed
+            if (    Speed <= 200.0 &&
+                    Speed >= 0.0 &&
+                    transmission.Mode == "D") {
+                car.Speed += 0.12 * engine.Power / 5;
             }
-            if (Speed > 0 && transmission.Mode != "R") {
-                car.Speed -= 0.15 * brakes.Power/5;
-                car.Speed-=car.Resist;
-            } else {
+            else if (Speed <= 0 &&
+                    transmission.Mode == "R" &&
+                    car.Speed >= -30) {
+                car.Speed -= 0.12 * engine.Power / 5;
+            }
+            //Calculating Brakes and Resistance influence on speed
+            if (Speed < 0) {
+                car.Speed += 0.15 * brakes.Power / 5;
+                car.Speed += car.Resist;
+            }
+            else if (Speed > 0) {
+                car.Speed -= 0.15 * brakes.Power / 5;
+                car.Speed -= car.Resist;
+            }
+            //Limiting of move direction for transmission
+            if (    (Speed > 0 && transmission.Mode == "R") ||
+                    (Speed < 0 && transmission.Mode != "R"))    {
                 car.Speed = 0.0;
             }
-
-
+            //Setting limits of possible speed
+            if (Speed < -30) {
+                car.Speed = -30.0;
+            }
+            if (Speed > 200) {
+                car.Speed = 200.0;
+            }
         }
     }
 
