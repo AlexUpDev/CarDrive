@@ -1,8 +1,5 @@
 
 
-
-package com.company;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,13 +36,7 @@ public class Main extends JFrame{
     JButton brakes75 = new JButton("B75%");
     JButton brakes100 = new JButton("B100%");
 
-    Engine engine = new Engine();
-    Transmission transmission = new Transmission();
-    Brakes brakes = new Brakes();
     Car car = new Car();
-
-
-
 
     public Main() {
         setBounds(550, 250, 550, 250);
@@ -81,17 +72,6 @@ public class Main extends JFrame{
 
         setVisible(true);
 
-
-        engine.State = "Off";
-        engine.Power = 0;
-
-        transmission.Mode = "P";
-
-        brakes.Power = 0;
-        car.Speed = 0.0;
-        car.Resist = 0.0;
-
-
         engineStartStop.addActionListener(new engineStartPressed());
 
         engine0.addActionListener(new engineSetPower0());
@@ -113,301 +93,123 @@ public class Main extends JFrame{
 
 
 
-        speedDisplay.setText(" Speed: " + car.Speed + "km/h");
+        speedDisplay.setText(" Speed: " + car.getRoundedSpeed() + "km/h");
         speedDisplay.setEditable(false);
-        engineIODisplay.setText(" Engine: " + engine.State);
+        engineIODisplay.setText(" Engine: " + car.engine.getStateString());
         engineIODisplay.setEditable(false);
-        enginePowerDisplay.setText(" Power: " + engine.Power +"%");
+        enginePowerDisplay.setText(" Power: " + car.engine.getPowerPercents() +"%");
         enginePowerDisplay.setEditable(false);
-        transmissionDisplay.setText(" Mode: " + transmission.Mode);
+        transmissionDisplay.setText(" Mode: " + car.transmission.getMode());
         transmissionDisplay.setEditable(false);
-        brakesDisplay.append(" Brakes: " + brakes.Power +"%");
+        brakesDisplay.append(" Brakes: " + car.wheels.getBrakesPowerPercents() +"%");
         brakesDisplay.setEditable(false);
         infoDisplay.append(" Useful info will appear here");
         infoDisplay.setEditable(false);
 
         Timer timer = new Timer();
         timer.schedule(new SpeedDisplay(), 0, 200);
-
-
-
     }
 
     class SpeedDisplay extends TimerTask {
         public void run() {
-            car.setResist(car.Speed);
-            car.calculateSpeed(car.Speed);
-            speedDisplay.setText(" Speed: " + Math.round(car.Speed) + "km/h");
+            car.calculateSpeed();
+            speedDisplay.setText(" Speed: " + car.getRoundedSpeed() + "km/h");
         }
     }
     class engineStartPressed implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            engine.StartStopEngine();
+            car.engine.startStopEngine(car.getSpeed());
+            engineIODisplay.setText(" Engine: " + car.engine.getStateString());
         }
     }
 
-
     class engineSetPower0 implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            engine.setPower(0);
+            car.engine.setPower(0.0);
+            enginePowerDisplay.setText(" Power: " + car.engine.getPowerPercents() +"%");
         }
     }
     class engineSetPower25 implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            engine.setPower(25);
+            car.engine.setPower(0.25);
+            enginePowerDisplay.setText(" Power: " + car.engine.getPowerPercents() +"%");
         }
     }
     class engineSetPower50 implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            engine.setPower(50);
+            car.engine.setPower(0.5);
+            enginePowerDisplay.setText(" Power: " + car.engine.getPowerPercents() +"%");
         }
     }
     class engineSetPower75 implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            engine.setPower(75);
+            car.engine.setPower(0.75);
+            enginePowerDisplay.setText(" Power: " + car.engine.getPowerPercents() +"%");
         }
     }
     class engineSetPower100 implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            engine.setPower(100);
+            car.engine.setPower(1.0);
+            enginePowerDisplay.setText(" Power: " + car.engine.getPowerPercents() +"%");
         }
     }
     class transmissionSetModeP implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            transmission.setMode("P");
+            car.transmission.setMode("P",car.getSpeed());
+            transmissionDisplay.setText(" Mode: " + car.transmission.getMode());
         }
     }
     class transmissionSetModeR implements ActionListener {
-        public void actionPerformed(ActionEvent e) { transmission.setMode("R");
+        public void actionPerformed(ActionEvent e) {
+            car.transmission.setMode("R", car.getSpeed());
+            transmissionDisplay.setText(" Mode: " + car.transmission.getMode());
         }
     }
     class transmissionSetModeN implements ActionListener {
-        public void actionPerformed(ActionEvent e) { transmission.setMode("N");
+        public void actionPerformed(ActionEvent e) {
+            car.transmission.setMode("N", car.getSpeed());
+            transmissionDisplay.setText(" Mode: " + car.transmission.getMode());
         }
     }
     class transmissionSetModeD implements ActionListener {
-        public void actionPerformed(ActionEvent e) { transmission.setMode("D");
+        public void actionPerformed(ActionEvent e) {
+            car.transmission.setMode("D", car.getSpeed());
+            transmissionDisplay.setText(" Mode: " + car.transmission.getMode());
         }
     }
     class brakesSet0 implements ActionListener {
-        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(0);
+        public void actionPerformed(ActionEvent e) {
+            car.wheels.setBrakesPower(0.0);
+            brakesDisplay.setText(" Brakes: " + car.wheels.getBrakesPowerPercents() +"%");
         }
     }
     class brakesSet25 implements ActionListener {
-        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(25);
+        public void actionPerformed(ActionEvent e) {
+            car.wheels.setBrakesPower(0.25);
+            brakesDisplay.setText(" Brakes: " + car.wheels.getBrakesPowerPercents() +"%");
         }
     }
     class brakesSet50 implements ActionListener {
-        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(50);
+        public void actionPerformed(ActionEvent e) {
+            car.wheels.setBrakesPower(0.5);
+            brakesDisplay.setText(" Brakes: " + car.wheels.getBrakesPowerPercents() +"%");
         }
     }
     class brakesSet75 implements ActionListener {
-        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(75);
+        public void actionPerformed(ActionEvent e) {
+            car.wheels.setBrakesPower(0.75);
+            brakesDisplay.setText(" Brakes: " + car.wheels.getBrakesPowerPercents() +"%");
         }
     }
     class brakesSet100 implements ActionListener {
-        public void actionPerformed(ActionEvent e) { brakes.setBrakesPower(100);
+        public void actionPerformed(ActionEvent e) {
+            car.wheels.setBrakesPower(1.0);
+            brakesDisplay.setText(" Brakes: " + car.wheels.getBrakesPowerPercents() +"%");
         }
     }
-
-
 
     public static void main(String[] args) {
         new Main();
     }
 
-    public class Engine {
-        //can be on/off
-        String State;
-        //0.33/0.66/1
-        Integer Power;
-        public void StartStopEngine() {
-            if(engine.State == "On") {
-                engine.State = "Off";
-                engine.Power = 0;
-                if (transmission.Mode != "P") {
-                    transmission.Mode = "N";
-                }
-                infoDisplay.setText(" Engine Stopped");
-                enginePowerDisplay.setText(" Power: " + engine.Power + "%");
-                transmissionDisplay.setText(" Mode: " + transmission.Mode);
-            }
-            else if(engine.State == "Off" && transmission.Mode == "P") {
-                engine.State = "On";
-                infoDisplay.setText(" Engine Started");
-            } else {
-                infoDisplay.setText(" Select P mode on transmission");
-            }
-
-            engineIODisplay.setText(" Engine: " + engine.State);
-        }
-
-        public void setPower(Integer percent) {
-            if(engine.State == "Off") {
-                infoDisplay.setText(" Start engine first!");
-            } else {
-                if (percent == 0) {
-                    engine.Power = 0;
-                }
-                if (percent == 25) {
-                    engine.Power = 25;
-                }
-                if (percent == 50) {
-                    engine.Power = 50;
-                }
-                if (percent == 75) {
-                    engine.Power = 75;
-                }
-                if (percent == 100) {
-                    engine.Power = 100;
-                }
-                enginePowerDisplay.setText(" Power: " + engine.Power +"%");
-            }
-
-        }
-
-
-    }
-
-    public class Transmission {
-        //P/R/N/D
-        String Mode;
-
-        public void setMode(String NewMode) {
-            if ((   transmission.Mode == "P" ||
-                    transmission.Mode == "N") &&
-                    brakes.Power == 0) {
-                infoDisplay.setText(" Hold brakes first!");
-            } else {
-                if (    NewMode == "P" ||
-                        NewMode == "R" &&
-                        car.Speed>0) {
-                    infoDisplay.setText(" Stop first!");
-                }
-                if (NewMode == "P" && car.Speed == 0) {
-                    transmission.Mode = "P";
-                    infoDisplay.setText(" ");
-                }
-                if (    NewMode == "R" &&
-                        engine.State == "On" &&
-                        car.Speed == 0){
-                    transmission.Mode = "R";
-                    infoDisplay.setText(" ");
-                }
-                if ((NewMode == "R") && (engine.State == "Off")) {
-                    infoDisplay.setText(" Start engine first!");
-                }
-                if (NewMode == "N") {
-                    transmission.Mode = "N";
-                    infoDisplay.setText(" ");
-                }
-                if ((NewMode == "D") && (engine.State == "On")) {
-                    transmission.Mode = "D";
-                    infoDisplay.setText(" ");
-                }
-                if ((NewMode == "D") && (engine.State == "Off")) {
-                    infoDisplay.setText(" Start engine first!");
-                }
-                if (NewMode == "P" ||
-                    NewMode == "D" &&
-                    car.Speed < 0) {
-                    infoDisplay.setText(" Stop first!");
-                }
-                transmissionDisplay.setText(" Mode: " + transmission.Mode);
-            }
-        }
-
-    }
-    public class Brakes {
-        //0/25/50/75/100
-        Integer Power;
-
-        public void setBrakesPower(Integer percent) {
-            if (percent == 0) {
-                brakes.Power = 0;
-            }
-            if (percent == 25) {
-                brakes.Power = 25;
-            }
-            if (percent == 50) {
-                brakes.Power = 50;
-            }
-            if (percent == 75) {
-                brakes.Power = 75;
-            }
-            if (percent == 100) {
-                brakes.Power = 100;
-            }
-            brakesDisplay.setText(" Brakes: " + brakes.Power +"%");
-        }
-
-    }
-
-    public class Car {
-        Double Speed;
-        Double Resist;
-        public void setResist(Double Speed) {
-            car.Resist = 0.2;
-            if(Speed > 60) {
-                car.Resist = 0.3;
-            }
-            if(Speed > 80) {
-                car.Resist = 0.4;
-            }
-            if(Speed > 100) {
-                car.Resist = 0.5;
-            }
-            if(Speed > 120) {
-                car.Resist = 0.6;
-            }
-            if(Speed > 140) {
-                car.Resist = 0.7;
-            }
-            if(Speed > 160) {
-                car.Resist = 0.8;
-            }
-            if(Speed > 180) {
-                car.Resist = 0.9;
-            }
-        }
-        public void calculateSpeed(Double Speed) {
-            //Calculating Engine influence on speed
-            if (    Speed <= 200.0 &&
-                    Speed >= 0.0 &&
-                    transmission.Mode == "D") {
-                car.Speed += 0.12 * engine.Power / 5;
-            }
-            else if (Speed <= 0 &&
-                    transmission.Mode == "R" &&
-                    car.Speed >= -30) {
-                car.Speed -= 0.12 * engine.Power / 5;
-            }
-            //Calculating Brakes and Resistance influence on speed
-            if (Speed < 0) {
-                car.Speed += 0.15 * brakes.Power / 5;
-                car.Speed += car.Resist;
-            }
-            else if (Speed > 0) {
-                car.Speed -= 0.15 * brakes.Power / 5;
-                car.Speed -= car.Resist;
-            }
-            //Limiting of move direction for transmission
-            if (    (Speed > 0 && transmission.Mode == "R") ||
-                    (Speed < 0 && transmission.Mode != "R"))    {
-                car.Speed = 0.0;
-            }
-            //Setting limits of possible speed
-            if (Speed < -30) {
-                car.Speed = -30.0;
-            }
-            if (Speed > 200) {
-                car.Speed = 200.0;
-            }
-        }
-    }
-
 }
-
-
-
-
